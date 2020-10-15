@@ -5,22 +5,20 @@ Vendor_ElvUI.ElvUIHookTries = 0
 local ElvUIBags = ElvUI[1]:GetModule("Bags")
 
 
-local function UpdateContainerElvUI(bag)
-	local frame = _G['ElvUI_ContainerFrameBag' .. bag]
+local function UpdateContainerElvUI(bagID)
+	local frame = _G['ElvUI_ContainerFrameBag' .. bagID]
 	local name = frame:GetName()
 	local size = frame.numSlots
 
 	if not size then return end
-	for i = 1, size do
-		local slot = i
-		local button = _G[name .. 'Slot' .. slot]
+	for slotID = 1, size do
+		
+		local button = _G[name .. 'Slot' .. slotID]
+		local item = VendorAddonAPI:GetBagItemFromCache(bagID, slotID)
 
-		local item = {}
-		item.Properties = VendorAddonAPI:GetItemPropertiesFromBag(bagID, slotID)
-
-		local isJunk = VendorAddonAPI:EvaluateItemForSelling(item)
-		local glow = button.JunkItemGlow or self:NewGlow(button)
-		local icon = button.JunkItemIcon or self:NewIcon(button)
+		local isJunk = item and item.Sell or false
+		local icon = button.JunkItemIcon or Vendor_ElvUI:NewIcon(button)
+		local glow = button.JunkItemGlow or Vendor_ElvUI:NewGlow(button)
 
 		glow:SetShown(isJunk)
 		icon:SetShown(isJunk)
@@ -42,13 +40,11 @@ local function UpdateSlot(_, self, bagID, slotID)
 		return
 	end
 
-	local item = {}
-	item.Properties = VendorAddonAPI:GetItemPropertiesFromBag(bagID, slotID)
-
-
 	local button = self.Bags[bagID][slotID]
+	local item = VendorAddonAPI:GetBagItemFromCache(bagID, slotID)
 
-	local isJunk = VendorAddonAPI:EvaluateItemForSelling(item.Properties)
+
+	local isJunk = item and item.Sell or false
 	local icon = button.JunkItemIcon or Vendor_ElvUI:NewIcon(button)
 	local glow = button.JunkItemGlow or Vendor_ElvUI:NewGlow(button)
 
@@ -101,6 +97,8 @@ end
 -- Hooks
 local function SetHooks()
 	hooksecurefunc(ElvUIBags, "UpdateSlot", UpdateSlot)
+	hooksecurefunc(VendorAddonAPI.Config, "NotifyChanges", UpdateAll)
+
 
 	SLASH_AUTOMAILER1= "/vendorelvui"
   SlashCmdList.AUTOMAILER = function(msg)
