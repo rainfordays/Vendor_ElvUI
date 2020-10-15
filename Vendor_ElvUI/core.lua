@@ -52,8 +52,8 @@ local function UpdateSlot(_, self, bagID, slotID)
 	local icon = button.JunkItemIcon or Vendor_ElvUI:NewIcon(button)
 	local glow = button.JunkItemGlow or Vendor_ElvUI:NewGlow(button)
 
-	button.JunkItemGlow:SetShown(isJunk and glow)
-	button.JunkItemIcon:SetShown(isJunk and icon)
+	button.JunkItemGlow:SetShown(isJunk and glow and Vendor_ElvUIDB.glow)
+	button.JunkItemIcon:SetShown(isJunk and icon and Vendor_ElvUIDB.icon)
 end
 
 
@@ -82,13 +82,34 @@ end
 
 
 
+function Vendor_ElvUI:SlashCommand(msg)
+	msg = string.lower(msg)
 
+	if msg == "glow" then
+		Vendor_ElvUIDB.glow = not Vendor_ElvUIDB.glow
+	end
+
+	if msg == "icon" then
+		Vendor_ElvUIDB.icon = not Vendor_ElvUIDB.icon
+	end
+
+	UpdateAll()
+end
 
 
 
 -- Hooks
 local function SetHooks()
 	hooksecurefunc(ElvUIBags, "UpdateSlot", UpdateSlot)
+
+	SLASH_AUTOMAILER1= "/vendorelvui"
+  SlashCmdList.AUTOMAILER = function(msg)
+    Vendor_ElvUI:SlashCommand(msg)
+	end
+	
+	Vendor_ElvUIDB = Vendor_ElvUIDB or {}
+	if Vendor_ElvUIDB.glow == nil then Vendor_ElvUIDB.glow = true end
+	if Vendor_ElvUIDB.icon == nil then Vendor_ElvUIDB.icon = true end
 
 	UpdateAll()
 end

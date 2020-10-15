@@ -5,5 +5,6 @@
 ## Author: RainForDays
 ## Version: 8.3.2
 ## Dependencies: Vendor, ElvUI
+## SavedVariables: Vendor_ElvUIDB
 
 core.lua
