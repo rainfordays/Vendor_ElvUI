@@ -36,23 +36,7 @@ local function UpdateAll()
 	end
 end
 
---[[
 
-	local function CacheBagItem(_, bagID, slotID)
-		if (not bagID or not slotID) or (bagID < 0 or slotID < 0) then return end
-		local button = _G['ElvUI_ContainerFrameBag' .. bagID .. 'Slot' .. slotID]
-		local item, _ = Vendor:GetItemPropertiesFromBag(bagID, slotID)
-		local result = Vendor.EvaluateItem(item)
-	
-	
-		local isJunk = result == 1
-		local icon = button.JunkItemIcon or Vendor_ElvUI:NewIcon(button)
-		local glow = button.JunkItemGlow or Vendor_ElvUI:NewGlow(button)
-	
-		button.JunkItemGlow:SetShown(isJunk and glow and Vendor_ElvUIDB.glow)
-		button.JunkItemIcon:SetShown(isJunk and icon and Vendor_ElvUIDB.icon)
-	end
-]]
 
 
 local function SetInside(obj, anchor, xOffset, yOffset, anchor2, noScale)
@@ -93,9 +77,6 @@ end
 
 
 
-
-
-
 function Vendor_ElvUI:NewGlow(button)
 	button.JunkItemGlow = button:CreateTexture(button:GetName().."JunkItemGlow", 'OVERLAY', nil, 5)
 	button.JunkItemGlow:SetInside()
@@ -128,7 +109,7 @@ function Vendor_ElvUI:SlashCommand(msg)
 		Vendor_ElvUIDB.icon = not Vendor_ElvUIDB.icon
 	end
 
-	Vendor_ElvUI:UpdateAll()
+	UpdateAll()
 end
 
 
